@@ -3,6 +3,16 @@ entries:
   app:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-09-10T13:39:51.749402883Z"
+    description: A Helm chart for Kubernetes
+    digest: 0b608c404ed9356af264facfbac245c8fe270cb63ef37b8637c69caee8850189
+    name: app
+    type: application
+    urls:
+    - https://github.com/hajdukd/bhav-sample-shared/releases/download/app-0.2.0/app-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-09-10T10:59:05.094101428Z"
     description: A Helm chart for Kubernetes
     digest: 0652b1f3d32e3473fa3246357bce5c0343581342289aede8d051f76115aafc6d
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/hajdukd/bhav-sample-shared/releases/download/app-0.1.0/app-0.1.0.tgz
     version: 0.1.0
-generated: "2022-09-10T10:59:05.094105328Z"
+generated: "2022-09-10T13:39:51.749423685Z"
