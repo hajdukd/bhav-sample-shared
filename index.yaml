@@ -31,4 +31,15 @@ entries:
     urls:
     - https://github.com/hajdukd/bhav-sample-shared/releases/download/app-0.1.0/app-0.1.0.tgz
     version: 0.1.0
-generated: "2022-09-11T13:44:40.376558113Z"
+  rollapp:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-09-26T21:29:00.095458685Z"
+    description: A Helm chart for Kubernetes
+    digest: 50bc3e00e01b49c9e8acdaa488c569648eef965f89db14193afaa712ce0e3a9d
+    name: rollapp
+    type: application
+    urls:
+    - https://github.com/hajdukd/bhav-sample-shared/releases/download/rollapp-0.1.0/rollapp-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-09-26T21:29:00.095480587Z"
