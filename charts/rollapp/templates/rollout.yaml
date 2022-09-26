@@ -1,0 +1,84 @@
+{{- $fullName := include "app.fullname" . -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "app.selectorLabels" . | nindent 6 }}
+  strategy:
+    canary:
+      canaryService: {{ $fullName }}-canary
+      stableService: {{ $fullName }}
+      trafficRouting:
+        nginx:
+          stableIngress: {{ $fullName }}
+      dynamicStableScale: true
+      steps:
+        # Deploy to 20% and wait 1m
+        - setWeight: 20
+        - pause: {duration: 1m}
+        # Perform a single success-rate check - expect 90%> success rate
+        - analysis:
+            templates:
+              - templateName: {{ $fullName }}-analysis
+        # Deploy to 60% and wait for manual confirmation to full
+        - setWeight: 60
+        - pause: {}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "app.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DEPLOY_VER
+              value: "2"
+          ports:
+            - name: http
+              containerPort: {{ .Values.container.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.container.healthcheck.path }}
+              port: http
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.container.healthcheck.path }}
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

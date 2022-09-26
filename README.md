@@ -1,6 +1,8 @@
 # Bhav-sample-shared
 
 Sample charts for presentation purposes
+- simple rolling deployment
+- canary argo rollout
 
 ## Usage
 

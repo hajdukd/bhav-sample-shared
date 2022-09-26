@@ -1,0 +1,23 @@
+{{- $fullName := include "app.fullname" . -}}
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ $fullName }}-analysis
+spec:
+  args:
+    - name: step
+      value: 5m
+  metrics:
+    - name: success-rate
+      successCondition: result[0] > 0.90
+      provider:
+        prometheus:
+          address: http://prometheus-server.monitoringv2
+          query: |
+            sum(irate(
+              nginx_ingress_controller_requests{ingress="{{ $fullName }}",status!~"[4-5].*"}[{{`{{args.step}}`}}]
+            ))
+            /
+            sum(irate(
+              nginx_ingress_controller_requests{ingress="{{ $fullName }}"}[{{`{{args.step}}`}}]
+            ))
